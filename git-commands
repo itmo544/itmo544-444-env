@@ -1,0 +1,21 @@
+From git repository:
+
+git add launch.sh
+git commit
+	new windows will open: add a comment what you changed
+	ctrl+o
+	hit enter
+	ctrl+x
+git push
+	enter user name
+	enter git password
+
+
+
+Clone git repository from git website to local pc:
+1. copy HTTPs cloneURL of repository from git website
+2. open terminal
+3. navigate to download directory (directory under which u wanna save git 	data)
+4. git clone https://github.com/itmo544/itmo544-444-env.git
+
+Done!
