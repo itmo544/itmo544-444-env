@@ -19,3 +19,8 @@ Clone git repository from git website to local pc:
 4. git clone https://github.com/itmo544/itmo544-444-env.git
 
 Done!
+
+always give permission to these shell scripts:
+
+chmod 755 launch.sh
+chmod 755 cleanup.sh
