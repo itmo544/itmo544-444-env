@@ -6,10 +6,11 @@ git commit
 	ctrl+o
 	hit enter
 	ctrl+x
+or you can also commit by this command
+git commit -m "add a comment what you changed"
 git push
 	enter user name
 	enter git password
-
 
 
 Clone git repository from git website to local pc:
