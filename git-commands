@@ -28,3 +28,9 @@ chmod 755 cleanup.sh
 
 #installing database:
 sudo php setup.php
+
+#check the error logs
+1. log into an instance through ss
+2. cd /tmp 
+3. ls	#all the error logs will showup
+4. cat database-setup.txt	#cat filename
