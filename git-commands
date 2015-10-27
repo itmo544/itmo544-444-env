@@ -1,19 +1,19 @@
-From git repository:
+#From git repository:
 
 git add launch.sh
 git commit
-	new windows will open: add a comment what you changed
-	ctrl+o
-	hit enter
-	ctrl+x
-or you can also commit by this command
+	#new windows will open: add a comment what you changed
+	#ctrl+o
+	#hit enter
+	#ctrl+x
+#or you can also commit by this command
 git commit -m "add a comment what you changed"
 git push
-	enter user name
-	enter git password
+	#enter user name
+	#enter git password
 
 
-Clone git repository from git website to local pc:
+#Clone git repository from git website to local pc:
 1. copy HTTPs cloneURL of repository from git website
 2. open terminal
 3. navigate to download directory (directory under which u wanna save git 	data)
@@ -21,7 +21,10 @@ Clone git repository from git website to local pc:
 
 Done!
 
-always give permission to these shell scripts:
+#always give permission to shell scripts:
 
 chmod 755 launch.sh
 chmod 755 cleanup.sh
+
+#installing database:
+sudo php setup.php
