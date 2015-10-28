@@ -12,6 +12,11 @@ git push
 	#enter user name
 	#enter git password
 
+#To remove file from git repository from CL
+git rm result.php
+git commit -m "message"
+git push
+
 
 #Clone git repository from git website to local pc:
 1. copy HTTPs cloneURL of repository from git website
