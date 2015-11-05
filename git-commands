@@ -21,7 +21,7 @@ git push
 #Clone git repository from git website to local pc:
 1. copy HTTPs cloneURL of repository from git website
 2. open terminal
-3. navigate to download directory (directory under which u wanna save git 	data)
+3. navigate to download directory (directory under which u wanna save git data)
 4. git clone https://github.com/itmo544/itmo544-444-env.git
 
 Done!
@@ -35,7 +35,10 @@ chmod 755 cleanup.sh
 sudo php setup.php
 
 #check the error logs
+0. tail /var/log/apache2/error.log
 1. log into an instance through ss
 2. cd /tmp 
 3. ls	#all the error logs will showup
 4. cat database-setup.txt	#cat filename
+
+
