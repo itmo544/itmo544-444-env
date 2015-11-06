@@ -16,6 +16,6 @@ sudo php /var/www/html/setup.php &> /tmp/database-setup.txt
 
 # (rw-------) The owner may read and write a file. All others have no rights. 
 # A common setting for data files that the owner wants to keep private.
-sudo chmod 600 /var/www/html/setup.php
+# sudo chmod 600 /var/www/html/setup.php
 
 echo "Hello! Sultan Here!" > /tmp/hello.txt
