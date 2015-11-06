@@ -45,7 +45,20 @@ SCALEDOWN=(`aws autoscaling put-scaling-policy --auto-scaling-group-name itmo-54
 
 
 #Cloud Watch Using Auto Scale Policy
-aws cloudwatch put-metric-alarm --alarm-name cpumon30 --alarm-description "Alarm when CPU exceeds 30 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 90 --threshold 30 --comparison-operator GreaterThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 2 --alarm-actions $SCALEUP --unit Percent
+aws cloudwatch put-metric-alarm --alarm-name cpumon30 --alarm-description "Alarm when CPU exceeds 30 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 90 --threshold 30 --comparison-operator GreaterThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 60 --alarm-actions $SCALEUP --unit Percent
 
-aws cloudwatch put-metric-alarm --alarm-name cpumon10 --alarm-description "Alarm when CPU drops below 10 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 90 --threshold 10 --comparison-operator LessThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 2 --alarm-actions $SCALEDOWN --unit Percent
+aws cloudwatch put-metric-alarm --alarm-name cpumon10 --alarm-description "Alarm when CPU drops below 10 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 90 --threshold 10 --comparison-operator LessThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 60 --alarm-actions $SCALEDOWN --unit Percent
+
+
+#Create Database
+aws rds create-db-instance --db-name customerrecords --db-instance-identifier mp1-sb --db-instance-class db.t1.micro --engine MySQL --master-username controller --master-user-password letmein888 --allocated-storage 5 --vpc-security-group-ids sg-e30e4b84 --publicly-accessible
+
+#Wait Untill Database is created and then print
+aws rds wait db-instance-available --db-instance-identifier mp1-sb
+
+
+
+
+
+
 
