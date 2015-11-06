@@ -41,4 +41,12 @@ sudo php setup.php
 3. ls	#all the error logs will showup
 4. cat database-setup.txt	#cat filename
 
+#log in to sql database
+
+mysql -h mp1-sb.cq1yqny3b3jn.us-east-1.rds.amazonaws.com -P 3306 -u controller -p
+enter your password: xyz
+show databases;
+use customerrecords;
+show tables;
+
 
