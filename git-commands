@@ -43,7 +43,7 @@ sudo php setup.php
 
 #log in to sql database
 
-mysql -h mp1-sb.cq1yqny3b3jn.us-east-1.rds.amazonaws.com -P 3306 -u controller -p
+mysql -h endpoint -P 3306 -u username -p
 enter your password: xyz
 show databases;
 use customerrecords;
