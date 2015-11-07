@@ -38,7 +38,7 @@ for i in {0..100}; do echo -ne '.'; sleep 1; done
 #aws autoscaling create-auto-scaling-group --auto-scaling-group-name itmo-544-extended-auto-scaling-group-2 --launch-configuration-name itmo544-launch-config --load-balancer-name itmo544sb-lb --health-check-type ELB --min-size 1 --max-size 3 --desired-capacity 2 --default-cooldown 600 --health-check-grace-period 120 --vpc-zone-identifier subnet-c856a5f5
 
 
-#Scaling policy for cloud watch
+#Scaling policy for Cloud Watch
 #SCALEUP=(`aws autoscaling put-scaling-policy --auto-scaling-group-name itmo-544-extended-auto-scaling-group-2 --policy-name scaleup3 --scaling-adjustment 3 --adjustment-type ChangeInCapacity --cooldown 60`)
 
 #SCALEDOWN=(`aws autoscaling put-scaling-policy --auto-scaling-group-name itmo-544-extended-auto-scaling-group-2 --policy-name scaledown3 --scaling-adjustment -3 --adjustment-type ChangeInCapacity --cooldown 60`)
@@ -66,7 +66,7 @@ mysql -h mp1-sb.cq1yqny3b3jn.us-east-1.rds.amazonaws.com -P 3306 -u controller -
 
 use customerrecords;
 
-CREATE TABLE IF NOT EXISTS items(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, uname VARCHAR(200) NOT NULL, email VARCHAR(200) NOT NULL, phone VARCHAR(20) NOT NULL, s3rawurl VARCHAR(255) NOT NULL, s3finishedurl VARCHAR(255) NOT NULL, jpgfilename VARCHAR(255) NOT NULL, status INT NOT NULL, tdate DATETIME DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS items(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,uname VARCHAR2(20) NOT NULL,email VARCHAR2(20) NOT NULL,phone VARCHAR2(20) NOT NULL,s3rawurl VARCHAR2(255) NOT NULL,s3finishedurl VARCHAR2(255) NOT NULL,jpgfilename VARCHAR2(255) NOT NULL,status TINYINT(3)CHECK(state IN(0,1,2)),tdate DATETIME DEFAULT CURRENT_TIMESTAMP);
 
 show tables;
 
