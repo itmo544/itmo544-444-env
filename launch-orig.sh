@@ -31,31 +31,31 @@ echo -e "\wait 8-10 minutes for ELB before it starts loading in browser"
 for i in {0..540}; do echo -ne ':-)'; sleep 1; done
 
 # Create Launch Configuration and Auto Scale
-#aws autoscaling create-launch-configuration --launch-configuration-name itmo544-launch-config --image-id ami-d05e75b8 --instance-type t2.micro --key-name itmo-linux-troubleshootingkey --security-groups sg-e30e4b84 --user-data file://install-env.sh --iam-instance-profile phpdeveloperRole
+aws autoscaling create-launch-configuration --launch-configuration-name itmo544-launch-config --image-id ami-d05e75b8 --instance-type t2.micro --key-name itmo-linux-troubleshootingkey --security-groups sg-e30e4b84 --user-data file://install-env.sh --iam-instance-profile phpdeveloperRole
 
-#aws autoscaling create-auto-scaling-group --auto-scaling-group-name itmo-544-extended-auto-scaling-group-2 --launch-configuration-name itmo544-launch-config --load-balancer-name itmo544sb-lb --health-check-type ELB --min-size 1 --max-size 3 --desired-capacity 2 --default-cooldown 600 --health-check-grace-period 120 --vpc-zone-identifier subnet-c856a5f5
+aws autoscaling create-auto-scaling-group --auto-scaling-group-name itmo-544-extended-auto-scaling-group-2 --launch-configuration-name itmo544-launch-config --load-balancer-name itmo544sb-lb --health-check-type ELB --min-size 1 --max-size 3 --desired-capacity 2 --default-cooldown 600 --health-check-grace-period 120 --vpc-zone-identifier subnet-c856a5f5
 
 
 #Scaling policy for Cloud Watch
-#SCALEUP=(`aws autoscaling put-scaling-policy --auto-scaling-group-name itmo-544-extended-auto-scaling-group-2 --policy-name scaleup3 --scaling-adjustment 3 --adjustment-type ChangeInCapacity --cooldown 60`)
+SCALEUP=(`aws autoscaling put-scaling-policy --auto-scaling-group-name itmo-544-extended-auto-scaling-group-2 --policy-name scaleup3 --scaling-adjustment 3 --adjustment-type ChangeInCapacity --cooldown 60`)
 
-#SCALEDOWN=(`aws autoscaling put-scaling-policy --auto-scaling-group-name itmo-544-extended-auto-scaling-group-2 --policy-name scaledown3 --scaling-adjustment -3 --adjustment-type ChangeInCapacity --cooldown 60`)
+SCALEDOWN=(`aws autoscaling put-scaling-policy --auto-scaling-group-name itmo-544-extended-auto-scaling-group-2 --policy-name scaledown3 --scaling-adjustment -3 --adjustment-type ChangeInCapacity --cooldown 60`)
 
 
 #Cloud Watch Using Auto Scale Policy
-#aws cloudwatch put-metric-alarm --alarm-name cpumon30 --alarm-description "Alarm when CPU exceeds 30 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 30 --comparison-operator GreaterThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $SCALEUP --unit Percent
+aws cloudwatch put-metric-alarm --alarm-name cpumon30 --alarm-description "Alarm when CPU exceeds 30 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 30 --comparison-operator GreaterThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $SCALEUP --unit Percent
 
-#aws cloudwatch put-metric-alarm --alarm-name cpumon10 --alarm-description "Alarm when CPU drops below 10 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 10 --comparison-operator LessThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $SCALEDOWN --unit Percent
+aws cloudwatch put-metric-alarm --alarm-name cpumon10 --alarm-description "Alarm when CPU drops below 10 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 10 --comparison-operator LessThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $SCALEDOWN --unit Percent
 
 
 #Create Database
-#aws rds create-db-instance --db-name customerrecords --db-instance-identifier mp1-sb --db-instance-class db.t1.micro --engine MySQL --engine-ver 5.6.23 --master-username controller --master-user-password letmein888 --allocated-storage 10 --vpc-security-group-ids sg-e30e4b84 --publicly-accessible
+aws rds create-db-instance --db-name customerrecords --db-instance-identifier mp1-sb --db-instance-class db.t1.micro --engine MySQL --engine-ver 5.6.23 --master-username controller --master-user-password letmein888 --allocated-storage 10 --vpc-security-group-ids sg-e30e4b84 --publicly-accessible
 
 #Wait Untill Database is created
-#aws rds wait db-instance-available --db-instance-identifier mp1-sb
+aws rds wait db-instance-available --db-instance-identifier mp1-sb
 
 #Create Read Replica Golden Copy
-#aws rds create-db-instance-read-replica --db-instance-identifier mp1-sb-rr --source-db-instance-identifier mp1-sb --publicly-accessible
+aws rds create-db-instance-read-replica --db-instance-identifier mp1-sb-rr --source-db-instance-identifier mp1-sb --publicly-accessible
 
 #Create an EndPoint
 DBEndpoint=(`aws rds describe-db-instances --output text | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"`);
