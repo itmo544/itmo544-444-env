@@ -27,8 +27,8 @@ aws elb configure-health-check --load-balancer-name itmo544sb-lb --health-check 
 aws elb create-lb-cookie-stickiness-policy --load-balancer-name itmo544sb-lb --policy-name cookie-policy --cookie-expiration-period 90
 aws elb set-load-balancer-policies-of-listener --load-balancer-name itmo544sb-lb --load-balancer-port 80 --policy-names cookie-policy
 
-echo -e "\wait 8-10 minutes for ELB before it starts loading in browser"
-for i in {0..540}; do echo -ne ':-)'; sleep 1; done
+echo -e "Wait 25 seconds for ELB"
+for i in {0..25}; do echo -ne ':)'; sleep 1; done
 
 # Create Launch Configuration and Auto Scale
 aws autoscaling create-launch-configuration --launch-configuration-name itmo544-launch-config --image-id ami-d05e75b8 --instance-type t2.micro --key-name itmo-linux-troubleshootingkey --security-groups sg-e30e4b84 --user-data file://install-env.sh --iam-instance-profile phpdeveloperRole
