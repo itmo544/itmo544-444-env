@@ -77,8 +77,7 @@ show tables;
 
 EOF
 
-
-echo "YAY!! It worked!!";
+echo "YAY It worked!!";
 
 #Launch Load balancer in Web Browser
 firefox $ELBURL

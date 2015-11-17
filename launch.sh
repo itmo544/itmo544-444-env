@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./cleanup.sh
+#./cleanup.sh
 
 # declare an array in bash
 declare -a instanceARRAY

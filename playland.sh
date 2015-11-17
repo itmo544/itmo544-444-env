@@ -31,3 +31,5 @@ CREATE TABLE items (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, uname VARCHAR(20
 show tables;
 
 EOF
+
+echo "YAY!! It worked!!";
