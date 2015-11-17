@@ -27,8 +27,8 @@ aws elb configure-health-check --load-balancer-name itmo544sb-lb --health-check 
 aws elb create-lb-cookie-stickiness-policy --load-balancer-name itmo544sb-lb --policy-name cookie-policy --cookie-expiration-period 90
 aws elb set-load-balancer-policies-of-listener --load-balancer-name itmo544sb-lb --load-balancer-port 80 --policy-names cookie-policy
 
-echo -e "\wait 8-10 minutes for ELB before it starts loading in browser"
-for i in {0..540}; do echo -ne ':-)'; sleep 1; done
+echo -e "\wait 1.5 minutes for ELB before it completely start working"
+for i in {0..90}; do echo -ne '++1'; sleep 1; done
 
 # Create Launch Configuration and Auto Scale
 aws autoscaling create-launch-configuration --launch-configuration-name itmo544-launch-config --image-id ami-d05e75b8 --instance-type t2.micro --key-name itmo-linux-troubleshootingkey --security-groups sg-e30e4b84 --user-data file://install-env.sh --iam-instance-profile phpdeveloperRole
@@ -59,7 +59,7 @@ aws rds create-db-instance-read-replica --db-instance-identifier mp1-sb-rr --sou
 
 #Create an EndPoint
 DBEndpoint=(`aws rds describe-db-instances --output text | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"`);
-echo ${DBEndpoint[@]}
+echo ${DBEndpoint[0]}
 
 #Create table if not created by setup.php
 	# Connect to database instance
@@ -67,7 +67,7 @@ echo ${DBEndpoint[@]}
 			# Create table (Forget setup.php)
 				# Show Schema 
 
-mysql -h ${DBEndpoint[@]} -P 3306 -u controller -pletmein888  << EOF
+mysql -h ${DBEndpoint[0]} -P 3306 -u controller -pletmein888  << EOF
 
 use customerrecords;
 
