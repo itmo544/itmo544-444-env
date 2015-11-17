@@ -61,9 +61,6 @@ for i in {0..540}; do echo -ne ':-)'; sleep 1; done
 DBEndpoint=(`aws rds describe-db-instances --output text | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"`);
 echo ${DBEndpoint[@]}
 
-#chmod 755 ../itmo544-444-fall2015/setup.php
-#sudo php ../itmo544-444-fall2015/setup.php
-
 #Create table if not created by setup.php
 	# Connect to database instance
 		# Connect to database
