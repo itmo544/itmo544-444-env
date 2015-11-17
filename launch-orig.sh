@@ -7,7 +7,6 @@ declare -a instanceARRAY
 
 mapfile -t instanceARRAY < <(aws ec2 run-instances --image-id ami-d05e75b8 --count 3 --instance-type t2.micro --key-name itmo-linux-troubleshootingkey --security-group-ids sg-e30e4b84 --subnet-id subnet-c856a5f5 --associate-public-ip-address --iam-instance-profile Name=phpdeveloperRole --user-data file://install-env.sh --output table | grep InstanceId | sed "s/|//g" | sed "s/ //g" | sed "s/InstanceId//g")
 
-
 echo ${instanceARRAY[@]}
 
 aws ec2 wait instance-running --instance-ids ${instanceARRAY[@]}
@@ -58,6 +57,9 @@ aws rds wait db-instance-available --db-instance-identifier mp1-sb
 
 #Create Read Replica Golden Copy
 aws rds create-db-instance-read-replica --db-instance-identifier mp1-sb-rr --source-db-instance-identifier mp1-sb --publicly-accessible
+
+#Create an EndPoint
+DBEndpoint=('aws rds describe-db-instances --output text | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"');
 
 #Create table if not created by setup.php
 	# Connect to database instance
