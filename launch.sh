@@ -59,7 +59,7 @@ aws rds create-db-instance-read-replica --db-instance-identifier mp1-sb-rr --sou
 
 #Create an EndPoint
 DBEndpoint=(`aws rds describe-db-instances --output text | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"`);
-echo ${DBEndpoint[@]}
+echo ${DBEndpoint[0]}
 
 #Create table if not created by setup.php
 	# Connect to database instance
@@ -67,7 +67,7 @@ echo ${DBEndpoint[@]}
 			# Create table (Forget setup.php)
 				# Show Schema 
 
-mysql -h ${DBEndpoint[@]} -P 3306 -u controller -pletmein888  << EOF
+mysql -h ${DBEndpoint[0]} -P 3306 -u controller -pletmein888  << EOF
 
 use customerrecords;
 
