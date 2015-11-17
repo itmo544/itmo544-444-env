@@ -51,10 +51,13 @@ for i in {0..100}; do echo -ne '.'; sleep 1; done
 
 
 #Create Database
-#aws rds create-db-instance --db-name customerrecords --db-instance-identifier mp1-sb --db-instance-class db.t1.micro --engine MySQL --master-username controller --master-user-password letmein888 --allocated-storage 5 --vpc-security-group-ids sg-e30e4b84 --publicly-accessible
+aws rds create-db-instance --db-name customerrecords --db-instance-identifier mp1-sb --db-instance-class db.t1.micro --engine MySQL --engine-ver 5.6.23 --master-username controller --master-user-password letmein888 --allocated-storage 10 --vpc-security-group-ids sg-e30e4b84 --publicly-accessible
 
-#Wait Untill Database is created and then print
+#Wait Untill Database is created
 aws rds wait db-instance-available --db-instance-identifier mp1-sb
+
+#Create Read Replica Golden Copy
+aws rds create-db-instance-read-replica --db-instance-identifier mp1-sb-rr --source-db-instance-identifier mp1-sb --publicly-accessible
 
 #Create table if not created by setup.php
 	# Connect to database instance
@@ -62,15 +65,13 @@ aws rds wait db-instance-available --db-instance-identifier mp1-sb
 			# Create table if doesn't exists
 				# Show Schema 
 
-mysql -h mp1-sb.cq1yqny3b3jn.us-east-1.rds.amazonaws.com -P 3306 -u controller -pletmein888  << EOF
+#mysql -h mp1-sb.cq1yqny3b3jn.us-east-1.rds.amazonaws.com -P 3306 -u controller -pletmein888  << EOF
 
-use customerrecords;
+#use customerrecords;
 
-CREATE TABLE IF NOT EXISTS items(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, uname VARCHAR2(20) NOT NULL, email VARCHAR2(20) NOT NULL, phone VARCHAR2(20) NOT NULL, s3rawurl VARCHAR2(255) NOT NULL, s3finishedurl VARCHAR2(255) NOT NULL, jpgfilename VARCHAR2(255) NOT NULL, status TINYINT(3)CHECK(state IN(0,1,2)), tdate DATETIME DEFAULT CURRENT_TIMESTAMP);
-
-show tables;
-
-EOF
+#CREATE TABLE IF NOT EXISTS items(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, uname VARCHAR2(20) NOT NULL, email VARCHAR2(20) NOT NULL, phone VARCHAR2(20) NOT NULL, s3rawurl VARCHAR2(255) NOT NULL, s3finishedurl VARCHAR2(255) NOT NULL, jpgfilename VARCHAR2(255) NOT NULL, status TINYINT(3)CHECK(state IN(0,1,2)), tdate DATETIME DEFAULT CURRENT_TIMESTAMP);
+#show tables;
+#EOF
 
 #Launch Load balancer in Web Browser
 firefox $ELBURL
