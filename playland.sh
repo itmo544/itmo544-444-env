@@ -10,7 +10,7 @@
 #aws rds create-db-instance-read-replica --db-instance-identifier mp1-sb-rr --source-db-instance-identifier mp1-sb --publicly-accessible
 
 #Create an EndPoint
-DBEndpoint=('aws rds describe-db-instances --output table | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"');
+DBEndpoint=(`aws rds describe-db-instances --output text | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"`);
 echo ${DBEndpoint[@]}
 
 #chmod 755 ../itmo544-444-fall2015/setup.php
@@ -22,7 +22,7 @@ echo ${DBEndpoint[@]}
 			# Create table (Forget setup.php)
 				# Show Schema 
 
-mysql -h ${DPEndpoint[0]} -P 3306 -u controller -pletmein888  << EOF
+mysql -h ${DBEndpoint[@]} -P 3306 -u controller -pletmein888  << EOF
 
 use customerrecords;
 
