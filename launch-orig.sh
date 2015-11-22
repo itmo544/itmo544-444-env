@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#################################
+#MP1 
+#################################
+
 ./cleanup.sh
 
 # declare an array in bash
@@ -24,28 +28,28 @@ aws elb register-instances-with-load-balancer --load-balancer-name itmo544sb-lb 
 aws elb configure-health-check --load-balancer-name itmo544sb-lb --health-check Target=HTTP:80/index.html,Interval=30,UnhealthyThreshold=2,HealthyThreshold=2,Timeout=3
 
 # create cookie stickiness policy for load balancer
-aws elb create-lb-cookie-stickiness-policy --load-balancer-name itmo544sb-lb --policy-name cookie-policy --cookie-expiration-period 90
-aws elb set-load-balancer-policies-of-listener --load-balancer-name itmo544sb-lb --load-balancer-port 80 --policy-names cookie-policy
+#aws elb create-lb-cookie-stickiness-policy --load-balancer-name itmo544sb-lb --policy-name cookie-policy --cookie-expiration-period 90
+#aws elb set-load-balancer-policies-of-listener --load-balancer-name itmo544sb-lb --load-balancer-port 80 --policy-names cookie-policy
 
-echo -e "\wait 1.5 minutes for ELB before it completely start working"
-for i in {0..90}; do echo -ne '++1'; sleep 1; done
+#echo -e "\wait 25 seconds for ELB"
+#for i in {0..25}; do echo -ne '.'; sleep 1; done
 
 # Create Launch Configuration and Auto Scale
-aws autoscaling create-launch-configuration --launch-configuration-name itmo544-launch-config --image-id ami-d05e75b8 --instance-type t2.micro --key-name itmo-linux-troubleshootingkey --security-groups sg-e30e4b84 --user-data file://install-env.sh --iam-instance-profile phpdeveloperRole
+#aws autoscaling create-launch-configuration --launch-configuration-name itmo544-launch-config --image-id ami-d05e75b8 --instance-type t2.micro --key-name itmo-linux-troubleshootingkey --security-groups sg-e30e4b84 --user-data file://install-env.sh --iam-instance-profile phpdeveloperRole
 
-aws autoscaling create-auto-scaling-group --auto-scaling-group-name itmo-544-extended-auto-scaling-group-2 --launch-configuration-name itmo544-launch-config --load-balancer-name itmo544sb-lb --health-check-type ELB --min-size 1 --max-size 3 --desired-capacity 2 --default-cooldown 600 --health-check-grace-period 120 --vpc-zone-identifier subnet-c856a5f5
+#aws autoscaling create-auto-scaling-group --auto-scaling-group-name itmo-544-extended-auto-scaling-group-2 --launch-configuration-name itmo544-launch-config --load-balancer-name itmo544sb-lb --health-check-type ELB --min-size 1 --max-size 3 --desired-capacity 2 --default-cooldown 600 --health-check-grace-period 120 --vpc-zone-identifier subnet-c856a5f5
 
 
 #Scaling policy for Cloud Watch
-SCALEUP=(`aws autoscaling put-scaling-policy --auto-scaling-group-name itmo-544-extended-auto-scaling-group-2 --policy-name scaleup3 --scaling-adjustment 3 --adjustment-type ChangeInCapacity --cooldown 60`)
+#SCALEUP=(`aws autoscaling put-scaling-policy --auto-scaling-group-name itmo-544-extended-auto-scaling-group-2 --policy-name scaleup3 --scaling-adjustment 3 --adjustment-type ChangeInCapacity --cooldown 60`)
 
-SCALEDOWN=(`aws autoscaling put-scaling-policy --auto-scaling-group-name itmo-544-extended-auto-scaling-group-2 --policy-name scaledown3 --scaling-adjustment -3 --adjustment-type ChangeInCapacity --cooldown 60`)
+#SCALEDOWN=(`aws autoscaling put-scaling-policy --auto-scaling-group-name itmo-544-extended-auto-scaling-group-2 --policy-name scaledown3 --scaling-adjustment -3 --adjustment-type ChangeInCapacity --cooldown 60`)
 
 
 #Cloud Watch Using Auto Scale Policy
-aws cloudwatch put-metric-alarm --alarm-name cpumon30 --alarm-description "Alarm when CPU exceeds 30 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 30 --comparison-operator GreaterThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $SCALEUP --unit Percent
+#aws cloudwatch put-metric-alarm --alarm-name cpumon30 --alarm-description "Alarm when CPU exceeds 30 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 30 --comparison-operator GreaterThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $SCALEUP --unit Percent
 
-aws cloudwatch put-metric-alarm --alarm-name cpumon10 --alarm-description "Alarm when CPU drops below 10 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 10 --comparison-operator LessThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $SCALEDOWN --unit Percent
+#aws cloudwatch put-metric-alarm --alarm-name cpumon10 --alarm-description "Alarm when CPU drops below 10 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 10 --comparison-operator LessThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $SCALEDOWN --unit Percent
 
 
 #Create Database
@@ -55,7 +59,10 @@ aws rds create-db-instance --db-name customerrecords --db-instance-identifier mp
 aws rds wait db-instance-available --db-instance-identifier mp1-sb
 
 #Create Read Replica Golden Copy
-aws rds create-db-instance-read-replica --db-instance-identifier mp1-sb-rr --source-db-instance-identifier mp1-sb --publicly-accessible
+#aws rds create-db-instance-read-replica --db-instance-identifier mp1-sb-rr --source-db-instance-identifier mp1-sb --publicly-accessible
+
+#Create table
+sudo php ../itmo544-444-fall2015/setup.php
 
 #Create an EndPoint
 DBEndpoint=(`aws rds describe-db-instances --output text | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"`);
@@ -64,45 +71,48 @@ echo ${DBEndpoint[0]}
 #Create table if not created by setup.php
 	# Connect to database instance
 		# Connect to database
-			# Create table (Forget setup.php)
+			# Create table
 				# Show Schema 
 
 mysql -h ${DBEndpoint[0]} -P 3306 -u controller -pletmein888  << EOF
 
 use customerrecords;
 
-CREATE TABLE items (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, uname VARCHAR(20) NOT NULL, email VARCHAR(20) NOT NULL, phone VARCHAR(20) NOT NULL, s3rawurl VARCHAR(255) NOT NULL, s3finishedurl VARCHAR(255) NOT NULL, filename VARCHAR(255) NOT NULL, status TINYINT(3)CHECK(state IN(0,1,2)), date DATETIME DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS items (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, uname VARCHAR(20) NOT NULL, email VARCHAR(20) NOT NULL, phone VARCHAR(20) NOT NULL, s3rawurl VARCHAR(255) NOT NULL, s3finishedurl VARCHAR(255) NOT NULL, filename VARCHAR(255) NOT NULL, status TINYINT(3)CHECK(state IN(0,1,2)), date DATETIME DEFAULT CURRENT_TIMESTAMP);
 
 show tables;
 
 EOF
 
 echo "YAY It worked!!";
-#Launch Load balancer in Web Browser
-firefox $ELBURL
 
 
-#MP 2 - SNS
+############################################
+# MP 2 - SNS
+############################################
 
 #CREATE A TOPIC
-ARN=(`aws sns create-topic --name mp2`)
-echo "This is the ARN: $ARN"
+#ARN=(`aws sns create-topic --name mp2`)
+#echo "This is the ARN: $ARN"
 
 #DISPLAY NAME ATTRIBUTE
-aws sns set-topic-attributes --topic-arn $ARN --attribute-name DisplayName --attribute-value mp2
+#aws sns set-topic-attributes --topic-arn $ARN --attribute-name DisplayName --attribute-value mp2
 
 #SUBSCRIBE
-aws sns subscribe --topic-arn $ARN --protocol sms --notification-endpoint 16303621844
+#aws sns subscribe --topic-arn $ARN --protocol sms --notification-endpoint 16303621844
 
-echo -e "Wait 30 seconds for Pending Confirmation"
-for i in {0..30}; do echo -ne ':)'; sleep 1; done
+#echo -e "Wait 45 seconds for Pending Confirmation"
+#for i in {0..45}; do echo -ne ':)'; sleep 1; done
 
 #PUBLISH
-aws sns publish --topic-arn "arn:aws:sns:us-east-1:882985546393:mp2" --message "Congratulations, you sucessfully subscribed"
+#aws sns publish --topic-arn "arn:aws:sns:us-east-1:882985546393:mp2" --message "Congratulations, you sucessfully subscribed"
 
 #SEND SMS WHN CLOUD WATCH METRIC TRIGGERED
-aws cloudwatch put-metric-alarm --alarm-name cpumon30 --alarm-description "Alarm when CPU exceeds 30 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 30 --comparison-operator GreaterThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $ARN --unit Percent
+#aws cloudwatch put-metric-alarm --alarm-name cpumon30 --alarm-description "Alarm when CPU exceeds 30 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 30 --comparison-operator GreaterThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $ARN --unit Percent
 
-aws cloudwatch put-metric-alarm --alarm-name cpumon10 --alarm-description "Alarm when CPU drops below 10 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 10 --comparison-operator LessThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $ARN --unit Percent
+#aws cloudwatch put-metric-alarm --alarm-name cpumon10 --alarm-description "Alarm when CPU drops below 10 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 10 --comparison-operator LessThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $ARN --unit Percent
 
 # Everything is working
+
+#Launch Load balancer in Web Browser
+firefox $ELBURL
