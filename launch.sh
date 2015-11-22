@@ -57,21 +57,24 @@ aws rds wait db-instance-available --db-instance-identifier mp1-sb
 #Create Read Replica Golden Copy
 aws rds create-db-instance-read-replica --db-instance-identifier mp1-sb-rr --source-db-instance-identifier mp1-sb --publicly-accessible
 
+#Create table
+php ./itmo544-444-fall2015/setup.php
+
 #Create an EndPoint
 DBEndpoint=(`aws rds describe-db-instances --output text | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"`);
 echo ${DBEndpoint[0]}
 
 #Create table if not created by setup.php
-	# Connect to database instance
+	# Connect to DB instance
 		# Connect to database
-			# Create table (Forget setup.php)
+			# Create a table
 				# Show Schema 
 
 mysql -h ${DBEndpoint[0]} -P 3306 -u controller -pletmein888  << EOF
 
 use customerrecords;
 
-CREATE TABLE items (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, uname VARCHAR(20) NOT NULL, email VARCHAR(20) NOT NULL, phone VARCHAR(20) NOT NULL, s3rawurl VARCHAR(255) NOT NULL, s3finishedurl VARCHAR(255) NOT NULL, filename VARCHAR(255) NOT NULL, status TINYINT(3)CHECK(state IN(0,1,2)), date DATETIME DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS items (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, uname VARCHAR(20) NOT NULL, email VARCHAR(20) NOT NULL, phone VARCHAR(20) NOT NULL, s3rawurl VARCHAR(255) NOT NULL, s3finishedurl VARCHAR(255) NOT NULL, filename VARCHAR(255) NOT NULL, status TINYINT(3)CHECK(state IN(0,1,2)), date DATETIME DEFAULT CURRENT_TIMESTAMP);
 
 show tables;
 
