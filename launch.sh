@@ -58,7 +58,7 @@ aws rds wait db-instance-available --db-instance-identifier mp1-sb
 aws rds create-db-instance-read-replica --db-instance-identifier mp1-sb-rr --source-db-instance-identifier mp1-sb --publicly-accessible
 
 #Create table
-php ./itmo544-444-fall2015/setup.php
+php ../itmo544-444-fall2015/setup.php
 
 #Create an EndPoint
 DBEndpoint=(`aws rds describe-db-instances --output text | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"`);
