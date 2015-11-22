@@ -12,10 +12,9 @@ mv ./itmo544-444-fall2015/*.php /var/www/html
 curl -sS https://getcomposer.org/installer | sudo php &> /tmp/getcomposer.txt
 sudo php composer.phar require aws/aws-sdk-php &> /tmp/runcomposer.txt
 sudo mv vendor /var/www/html &> /tmp/movevendor.txt
+sudo php /var/www/html/setup.php &> /tmp/database-setup.txt
 
-#sudo php /var/www/html/setup.php &> /tmp/database-setup.txt
-
-# (rw-------) The owner may read and write a file. All others have no rights. 
+# (rw-------) The owner may read and write a file. All others have no rights.
 # A common setting for data files that the owner wants to keep private.
 #sudo chmod 600 /var/www/html/setup.php
 
