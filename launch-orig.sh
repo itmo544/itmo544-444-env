@@ -1,7 +1,14 @@
 #!/bin/bash
 
 #################################
-#MP1 
+
+#Mini Project 1
+
+#Database username: controller
+#Database password: letmein888
+#Database name: customerrecords
+#Database table name: items 
+
 #################################
 
 ./cleanup.sh
@@ -14,7 +21,11 @@ mapfile -t instanceARRAY < <(aws ec2 run-instances --image-id ami-d05e75b8 --cou
 echo ${instanceARRAY[@]}
 
 aws ec2 wait instance-running --instance-ids ${instanceARRAY[@]}
-echo "instances are running"
+#echo "instances are running"
+
+echo "/n==========================================================/n";
+echo "Instance created successfully, now creating load balancers";
+echo "/n==========================================================/n";
 
 ELBURL=(`aws elb create-load-balancer --load-balancer-name itmo544sb-lb --listeners Protocol=HTTP,LoadBalancerPort=80,InstanceProtocol=HTTP,InstancePort=80 --subnets subnet-c856a5f5 --security-groups sg-e30e4b84 --output=text`); echo $ELBURL
 echo -e "\nELB Launching is finished and now sleeping for 25 seconds"
@@ -34,6 +45,10 @@ aws elb configure-health-check --load-balancer-name itmo544sb-lb --health-check 
 #echo -e "\wait 25 seconds for ELB"
 #for i in {0..25}; do echo -ne '.'; sleep 1; done
 
+echo "/n=========================================/n";
+echo "Creating Autoscale and Cloudwatch Metrics";
+echo "/n=========================================/n";
+
 # Create Launch Configuration and Auto Scale
 #aws autoscaling create-launch-configuration --launch-configuration-name itmo544-launch-config --image-id ami-d05e75b8 --instance-type t2.micro --key-name itmo-linux-troubleshootingkey --security-groups sg-e30e4b84 --user-data file://install-env.sh --iam-instance-profile phpdeveloperRole
 
@@ -52,6 +67,10 @@ aws elb configure-health-check --load-balancer-name itmo544sb-lb --health-check 
 #aws cloudwatch put-metric-alarm --alarm-name cpumon10 --alarm-description "Alarm when CPU drops below 10 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 10 --comparison-operator LessThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $SCALEDOWN --unit Percent
 
 
+echo "/n=====================================/n";
+echo "Creating database, wait 10-15 minutes";
+echo "/n=====================================/n";
+
 #Create Database
 aws rds create-db-instance --db-name customerrecords --db-instance-identifier mp1-sb --db-instance-class db.t1.micro --engine MySQL --engine-ver 5.6.23 --master-username controller --master-user-password letmein888 --allocated-storage 10 --vpc-security-group-ids sg-e30e4b84 --publicly-accessible
 
@@ -62,7 +81,7 @@ aws rds wait db-instance-available --db-instance-identifier mp1-sb
 #aws rds create-db-instance-read-replica --db-instance-identifier mp1-sb-rr --source-db-instance-identifier mp1-sb --publicly-accessible
 
 #Create table
-sudo php ../itmo544-444-fall2015/setup.php
+#sudo php ../itmo544-444-fall2015/setup.php
 
 #Create an EndPoint
 DBEndpoint=(`aws rds describe-db-instances --output text | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"`);
@@ -84,7 +103,9 @@ show tables;
 
 EOF
 
-echo "YAY It worked!!";
+echo "/n==============================================/n";
+echo "MP1 successfully completed. Now working on mp2";
+echo "/n==============================================/n";
 
 
 ############################################
