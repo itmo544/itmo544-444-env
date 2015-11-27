@@ -11,7 +11,7 @@
 
 #################################
 
-./cleanup.sh
+#./cleanup.sh
 
 # declare an array in bash
 declare -a instanceARRAY
@@ -28,10 +28,10 @@ echo "Instance created successfully. Now creating load balancers";
 echo "==========================================================";
 
 ELBURL=(`aws elb create-load-balancer --load-balancer-name itmo544sb-lb --listeners Protocol=HTTP,LoadBalancerPort=80,InstanceProtocol=HTTP,InstancePort=80 --subnets subnet-c856a5f5 --security-groups sg-e30e4b84 --output=text`); echo $ELBURL
-echo "============================================================";
+echo "=========================================================";
 echo -e "ELB Launching is finished and now sleeping for 25 seconds"
 for i in {0..25}; do echo -ne '.'; sleep 1;done
-echo "============================================================";
+echo "...............................";
 
 # register instances with load balancer
 aws elb register-instances-with-load-balancer --load-balancer-name itmo544sb-lb --instances ${instanceARRAY[@]}
@@ -46,7 +46,7 @@ aws elb configure-health-check --load-balancer-name itmo544sb-lb --health-check 
 echo -e "Wait 25 seconds for ELB"
 for i in {0..25}; do echo -ne '.'; sleep 1; done
 
-echo "=========================================";
+echo "................";
 echo "Creating Autoscale and Cloudwatch Metrics";
 echo "=========================================";
 
@@ -73,10 +73,10 @@ echo "Creating database, wait 10-15 minutes";
 echo "=====================================";
 
 #Create Database
-#aws rds create-db-instance --db-name customerrecords --db-instance-identifier mp1-sb --db-instance-class db.t1.micro --engine MySQL --engine-ver 5.6.23 --master-username controller --master-user-password letmein888 --allocated-storage 10 --vpc-security-group-ids sg-e30e4b84 --publicly-accessible
+aws rds create-db-instance --db-name customerrecords --db-instance-identifier mp1-sb --db-instance-class db.t1.micro --engine MySQL --engine-ver 5.6.23 --master-username controller --master-user-password letmein888 --allocated-storage 10 --vpc-security-group-ids sg-e30e4b84 --publicly-accessible
 
 #Wait Untill Database is created
-#aws rds wait db-instance-available --db-instance-identifier mp1-sb
+aws rds wait db-instance-available --db-instance-identifier mp1-sb
 
 #Create Read Replica Golden Copy
 #aws rds create-db-instance-read-replica --db-instance-identifier mp1-sb-rr --source-db-instance-identifier mp1-sb --publicly-accessible
@@ -85,8 +85,8 @@ echo "=====================================";
 #sudo php ../itmo544-444-fall2015/setup.php
 
 #Create an EndPoint
-#DBEndpoint=(`aws rds describe-db-instances --output text | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"`);
-#echo ${DBEndpoint[0]}
+DBEndpoint=(`aws rds describe-db-instances --output text | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"`);
+echo ${DBEndpoint[0]}
 
 #Create table if not created by setup.php
 	# Connect to database instance
@@ -136,11 +136,12 @@ echo "==============================================";
 
 # Everything is working
 
+echo -e "Wait 90 seconds for ELB"
+for i in {0..90}; do echo -ne '.'; sleep 1; done
+
 echo "=================================================================";
 echo "Everything is successfully created. Now launching ELB in Firefox";
 echo "=================================================================";
-echo -e "Wait 90 seconds for ELB"
-for i in {0..90}; do echo -ne '.'; sleep 1; done
 
 #Launch Load balancer in Web Browser
 firefox $ELBURL
