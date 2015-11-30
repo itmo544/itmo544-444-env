@@ -16,7 +16,7 @@ echo "Cleaning up previous Instances, Load Blacer, Autoscale, and RDS";
 echo "===============================================================";
 
 #./cleanup-def.sh
-#./cleanup.sh
+./cleanup.sh
 
 # declare an array in bash
 declare -a instanceARRAY
@@ -25,7 +25,7 @@ mapfile -t instanceARRAY < <(aws ec2 run-instances --image-id ami-d05e75b8 --cou
 
 echo ${instanceARRAY[@]}
 
-aws ec2 wait instance-running --instance-ids ${instanceARRAY[@]}
+#aws ec2 wait instance-running --instance-ids ${instanceARRAY[@]}
 #echo "instances are running"
 
 echo "==========================================================";
@@ -90,8 +90,8 @@ echo "=====================================";
 #sudo php ../itmo544-444-fall2015/setup.php
 
 #Create an EndPoint
-#DBEndpoint=(`aws rds describe-db-instances --output text | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"`);
-#echo ${DBEndpoint[0]}
+DBEndpoint=(`aws rds describe-db-instances --output text | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"`);
+echo ${DBEndpoint[0]}
 
 #Create table if not created by setup.php
 	# Connect to database instance
@@ -145,8 +145,6 @@ echo "==============================================";
 #aws cloudwatch put-metric-alarm --alarm-name cpumon30 --alarm-description "Alarm when CPU exceeds 30 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 30 --comparison-operator GreaterThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $ARN --unit Percent
 
 #aws cloudwatch put-metric-alarm --alarm-name cpumon10 --alarm-description "Alarm when CPU drops below 10 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 10 --comparison-operator LessThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $ARN --unit Percent
-
-# Everything is working
 
 echo -e "Wait 2.5 minutes for ELB"
 for i in {0..150}; do echo -ne '.'; sleep 1; done
