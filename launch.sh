@@ -49,7 +49,7 @@ aws elb set-load-balancer-policies-of-listener --load-balancer-name itmo544sb-lb
 echo -e "Wait 25 seconds for ELB to complete all tasks"
 for i in {0..25}; do echo -ne ':)'; sleep 1; done
 
-echo "=========================================";
+echo "................";
 echo "Creating Autoscale and Cloudwatch Metrics";
 echo "=========================================";
 
@@ -107,7 +107,7 @@ show tables;
 EOF
 
 echo "==============================================";
-echo "MP1 successfully completed. Now launching MP-2";
+echo "MP1 successfully completed. Now executing MP-2";
 echo "==============================================";
 
 ############################################
@@ -116,7 +116,7 @@ echo "==============================================";
 #Create A Topic
 #Display Name Attributes
 #Subscribe
-#Publish
+#Publish (Topic Arn hard coded)
 #Create Cloud watch metric
 
 ############################################
@@ -141,8 +141,6 @@ aws sns publish --topic-arn "arn:aws:sns:us-east-1:882985546393:mp2" --message "
 aws cloudwatch put-metric-alarm --alarm-name cpumon30 --alarm-description "Alarm when CPU exceeds 30 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 30 --comparison-operator GreaterThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $ARN --unit Percent
 
 aws cloudwatch put-metric-alarm --alarm-name cpumon10 --alarm-description "Alarm when CPU drops below 10 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 10 --comparison-operator LessThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $ARN --unit Percent
-
-# Everything is working
 
 echo "====================================================================";
 echo "Everything is successfully created. Now launching webpage in Firefox";

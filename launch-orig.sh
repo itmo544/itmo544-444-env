@@ -16,7 +16,7 @@ echo "Cleaning up previous Instances, Load Blacer, Autoscale, and RDS";
 echo "===============================================================";
 
 #./cleanup-def.sh
-./cleanup.sh
+#./cleanup.sh
 
 # declare an array in bash
 declare -a instanceARRAY
@@ -116,6 +116,13 @@ echo "==============================================";
 
 ############################################
 # MP 2 - SNS
+
+#Create A Topic
+#Display Name Attributes
+#Subscribe
+#Publish (Topic Arn hard coded)
+#Create Cloud watch metric
+
 ############################################
 
 #CREATE A TOPIC
