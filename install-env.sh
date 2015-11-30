@@ -2,6 +2,7 @@
 
 sudo apt-get update -y
 sudo apt-get install -y apache2 git php5 php5-curl mysql-client curl php5-mysql php5-imagick
+sudo service apache2 restart
 
 git clone https://github.com/itmo544/itmo544-444-fall2015.git
 
