@@ -4,6 +4,7 @@
 
 #Mini Project 1
 
+#EC2 Instances take 7 $ Arguments
 #Database username: controller
 #Database password: letmein888
 #Database name: customerrecords
@@ -14,7 +15,8 @@
 echo "===============================================================";
 echo "Cleaning up previous Instances, Load Blacer, Autoscale, and RDS";
 echo "===============================================================";
-./cleanup.sh
+
+./destroy-all.sh
 
 # declare an array in bash
 declare -a instanceARRAY
