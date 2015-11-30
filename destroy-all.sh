@@ -64,11 +64,11 @@ aws autoscaling delete-launch-configuration --launch-configuration-name $LAUNCHC
 fi
 
 #Delete SNS
-ARN=(`aws sns list-topics --output json | grep Topics | sed "s/[\"\:\, ]//g" | sed "s/TopicArn//g"`);
-aws sns delete-topic --topic-arn $ARN
+#ARN=(`aws sns list-topics --output json | grep Topics | sed "s/[\"\:\, ]//g" | sed "s/TopicArn//g"`);
+#aws sns delete-topic --topic-arn $ARN
 
 #Delete S3 - Testing
-S3=(aws s3 ls s3://All Buckets --output json | grep All Buckets | sed "s/[\"\:\, ]//g" | sed "s/ //g"`);
-aws s3 rm $S3
+#S3=(aws s3 ls s3://All Buckets --output json | grep All Buckets | sed "s/[\"\:\, ]//g" | sed "s/ //g"`);
+#aws s3 rm $S3
 
 echo "All done"
