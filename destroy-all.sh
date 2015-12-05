@@ -65,10 +65,33 @@ fi
 
 #Delete SNS
 ARN=(`aws sns list-topics --output json | grep TopicArn | sed "s/[\"\:\, ]//g" | sed "s/TopicArn//g"`);
-aws sns delete-topic --topic-arn $ARN
+echo "Here is the list of SNS Topics: " ${ARN[i]}
+if [ ${#ARN[@]} -gt 0 ]
+   then
+   echo "Deleting existing SNS TOPICS"
+   LENGTH=${#ARN[@]}  
+
+   # http://docs.aws.amazon.com/cli/latest/reference/rds/wait/db-instance-deleted.html
+      for (( i=0; i<${LENGTH}; i++));
+      do 
+      aws sns delete-topic --topic-arn ${ARN[i]} --output text
+      sleep 1 
+   done
+fi
 
 #Delete S3 - Testing
-#S3=(aws s3 ls s3://All Buckets --output json | grep All Buckets | sed "s/[\"\:\, ]//g" | sed "s/ //g"`);
-#aws s3 rm $S3
+S3=(aws s3 ls s3://All Buckets --output json | grep All Buckets | sed "s/[\"\:\, ]//g" | sed "s/ //g"`);
+echo "S3 buckets: " ${S3[i]}
+if [ ${#S3[@]} -gt 0 ]
+   then
+   echo "Deleting existing S3 buckets"
+   LENGTH=${#S3[@]}  
+
+      for (( i=0; i<${LENGTH}; i++));
+      do 
+	aws s3 rm ${S3[i]} --output text
+      sleep 1 
+   done
+fi
 
 echo "All done"
