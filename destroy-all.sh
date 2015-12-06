@@ -3,6 +3,8 @@
 declare -a cleanupARR
 declare -a cleanupLBARR
 declare -a dbInstanceARR
+declare -a ARN
+declare -a s3
 
 aws ec2 describe-instances --filter Name=instance-state-code,Values=16 --output table | grep InstanceId | sed "s/|//g" | tr -d ' ' | sed "s/InstanceId//g"
 
@@ -63,35 +65,55 @@ aws autoscaling delete-auto-scaling-group --auto-scaling-group-name $SCALENAME
 aws autoscaling delete-launch-configuration --launch-configuration-name $LAUNCHCONF
 fi
 
+
 #Delete SNS
-ARN=(`aws sns list-topics --output json | grep TopicArn | sed "s/[\"\:\, ]//g" | sed "s/TopicArn//g"`);
-echo "Here is the list of SNS Topics: " ${ARN[i]}
+declare -a ARN
+
+mapfile -t ARN < <(aws sns list-topics --output json | grep TopicArn | sed "s/[\", ]//g" | sed "s/TopicArn//g" | sed "s/\://");
+echo "Here is the list of SNS Topics: " ${ARN[@]}
 if [ ${#ARN[@]} -gt 0 ]
    then
    echo "Deleting existing SNS TOPICS"
    LENGTH=${#ARN[@]}  
-
-   # http://docs.aws.amazon.com/cli/latest/reference/rds/wait/db-instance-deleted.html
-      for (( i=0; i<${LENGTH}; i++));
+    for (( i=0; i<${LENGTH}; i++));
       do 
       aws sns delete-topic --topic-arn ${ARN[i]} --output text
-      sleep 1 
-   done
+	done
+echo "Sucessfully deleted All SNS Topics";
 fi
 
-#Delete S3 - Testing
-S3=(aws s3 ls s3://All Buckets --output json | grep All Buckets | sed "s/[\"\:\, ]//g" | sed "s/ //g"`);
-echo "S3 buckets: " ${S3[i]}
-if [ ${#S3[@]} -gt 0 ]
-   then
+#Delete s3 buckets
+sudo apt-get install s3cmd
+s3cmd --configure
+
+FILES=(`s3cmd ls s3://mybucket | grep -v DIR | awk '{print $4}' | tr '\n' ' '`); 
+for FILENAME in ${FILES[*]}; 
+    do 
+	s3cmd del $FILENAME; 
+done
+
+DIRS=(`s3cmd ls s3://mybucket | grep DIR | awk '{print $2}' | tr '\n' ' '`) 
+for DIRNAME in ${DIRS[*]}; 
+    do 
+	s3cmd del --recursive $DIRNAME; 
+
+done
+
+#source: http://anton.logvinenko.name/en/blog/how-to-delete-all-files-from-amazon-s3-bucket.html
+
+#Delete S3 - If previously Failed
+mapfile -t s3 < <(aws s3 ls s3://mybucket --output json | grep DIR | awk '{print $2}' | tr '\n' ' ');
+echo "Here is the list of S3 bucket: " ${s3[@]}
+if [ ${#s3[@]} -gt 0 ]
+  then
    echo "Deleting existing S3 buckets"
-   LENGTH=${#S3[@]}  
+   LENGTH=${#s3[@]}  
 
       for (( i=0; i<${LENGTH}; i++));
       do 
-	aws s3 rm ${S3[i]} --output text
-      sleep 1 
+	aws s3 rm ${s3[i]} --output text
    done
+echo "Sucessfully deleted s3 buckets";
 fi
 
-echo "All done"
+echo "All done."
