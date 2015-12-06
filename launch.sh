@@ -85,9 +85,6 @@ aws rds wait db-instance-available --db-instance-identifier mp1-sb
 #Create Read Replica Golden Copy
 aws rds create-db-instance-read-replica --db-instance-identifier mp1-sb-rr --source-db-instance-identifier mp1-sb --publicly-accessible
 
-#Create table
-php ../itmo544-444-fall2015/setup.php
-
 #Create an EndPoint
 DBEndpoint=(`aws rds describe-db-instances --output text | grep ENDPOINT | sed -e "s/3306//g" -e "s/ //g" -e "s/ENDPOINT//g"`);
 echo ${DBEndpoint[0]}
@@ -137,7 +134,7 @@ echo -e "Wait 30 seconds for Pending Confirmation"
 for i in {0..30}; do echo -ne ':)'; sleep 1; done
 
 #PUBLISH
-#aws sns publish --topic-arn "arn:aws:sns:us-east-1:882985546393:mp2" --message "Congratulations, you sucessfully subscribed"
+aws sns publish --topic-arn "arn:aws:sns:us-east-1:882985546393:mp2" --message "Congratulations, you sucessfully subscribed"
 
 #SEND SMS WHEN CLOUD WATCH METRIC TRIGGERED
 aws cloudwatch put-metric-alarm --alarm-name cpumon30 --alarm-description "Alarm when CPU exceeds 30 percent" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 30 --comparison-operator GreaterThanOrEqualToThreshold  --dimensions "Name=AutoScalingGroupName,Value=itmo-544-extended-auto-scaling-group-2" --evaluation-periods 1 --alarm-actions $ARN --unit Percent
