@@ -65,10 +65,8 @@ aws autoscaling delete-auto-scaling-group --auto-scaling-group-name $SCALENAME
 aws autoscaling delete-launch-configuration --launch-configuration-name $LAUNCHCONF
 fi
 
-
+echo "Cleaning up SNS"
 #Delete SNS
-declare -a ARN
-
 mapfile -t ARN < <(aws sns list-topics --output json | grep TopicArn | sed "s/[\", ]//g" | sed "s/TopicArn//g" | sed "s/\://");
 echo "Here is the list of SNS Topics: " ${ARN[@]}
 if [ ${#ARN[@]} -gt 0 ]
@@ -83,37 +81,38 @@ echo "Sucessfully deleted All SNS Topics";
 fi
 
 #Delete s3 buckets
-sudo apt-get install s3cmd
-s3cmd --configure
+#sudo apt-get install s3cmd
+#s3cmd --configure
 
-FILES=(`s3cmd ls s3://mybucket | grep -v DIR | awk '{print $4}' | tr '\n' ' '`); 
-for FILENAME in ${FILES[*]}; 
-    do 
-	s3cmd del $FILENAME; 
-done
+#FILES=(`s3cmd ls s3://mybucket | grep -v DIR | awk '{print $4}' | tr '\n' ' '`); 
+#for FILENAME in ${FILES[*]}; 
+#    do 
+#	s3cmd del $FILENAME; 
+#done
 
-DIRS=(`s3cmd ls s3://mybucket | grep DIR | awk '{print $2}' | tr '\n' ' '`) 
-for DIRNAME in ${DIRS[*]}; 
-    do 
-	s3cmd del --recursive $DIRNAME; 
-
-done
-
+#DIRS=(`s3cmd ls s3://mybucket | grep DIR | awk '{print $2}' | tr '\n' ' '`) 
+#for DIRNAME in ${DIRS[*]}; 
+#    do 
+#	s3cmd del --recursive $DIRNAME; 
+#done
 #source: http://anton.logvinenko.name/en/blog/how-to-delete-all-files-from-amazon-s3-bucket.html
 
-#Delete S3 - If previously Failed
-mapfile -t s3 < <(aws s3 ls s3://mybucket --output json | grep DIR | awk '{print $2}' | tr '\n' ' ');
-echo "Here is the list of S3 bucket: " ${s3[@]}
-if [ ${#s3[@]} -gt 0 ]
-  then
-   echo "Deleting existing S3 buckets"
-   LENGTH=${#s3[@]}  
 
-      for (( i=0; i<${LENGTH}; i++));
-      do 
-	aws s3 rm ${s3[i]} --output text
-   done
-echo "Sucessfully deleted s3 buckets";
-fi
+#Remove # fro the following code in order to cleanup S3 bucket
+
+#Delete S3 - If previously Failed
+#mapfile -t s3 < <(aws s3 ls s3://mybucket --output json | grep DIR | awk '{print $2}' | tr '\n' ' ');
+#echo "Here is the list of S3 bucket: " ${s3[@]}
+#if [ ${#s3[@]} -gt 0 ]
+#  then
+#   echo "Deleting existing S3 buckets"
+#   LENGTH=${#s3[@]}  
+#
+#      for (( i=0; i<${LENGTH}; i++));
+#      do 
+#	aws s3 rm ${s3[i]} --output text
+#   done
+#echo "Sucessfully deleted s3 buckets";
+#fi
 
 echo "All done."
